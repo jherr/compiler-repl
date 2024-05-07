@@ -1,0 +1,20 @@
+{
+  "presets": [
+    [
+      "@babel/preset-react",
+      {
+        "development": false,
+        "pragma": "__jsx"
+      }
+    ]
+  ],
+  "plugins": [
+    [
+      "babel-plugin-react-forget",
+      {
+        "compilationMode": "infer",
+        "panicThreshold": "NONE"
+      }
+    ]
+  ]
+}
