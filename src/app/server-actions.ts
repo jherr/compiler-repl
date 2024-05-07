@@ -1,11 +1,11 @@
 "use server";
 import { spawn } from "node:child_process";
 
-export async function transpile(
+async function getOutput(
   code: string,
-  config: string = "compiler.babelrc.json"
+  command: string
 ): Promise<{ stdout: string; stderr: string }> {
-  const childProcess = spawn(`npx babel --config-file ./${config} -f foo.js`, {
+  const childProcess = spawn(command, {
     shell: true,
     stdio: ["pipe", "pipe", "pipe"],
   });
@@ -48,4 +48,20 @@ export async function transpile(
   });
 
   return { stdout, stderr };
+}
+
+export async function eslint(
+  code: string
+): Promise<{ stdout: string; stderr: string }> {
+  return getOutput(
+    code,
+    `npx eslint --no-eslintrc --config compiler.eslintrc.json --stdin --no-color`
+  );
+}
+
+export async function transpile(
+  code: string,
+  config: string = "compiler.babelrc.json"
+): Promise<{ stdout: string; stderr: string }> {
+  return getOutput(code, `npx babel --config-file ./${config} -f foo.js`);
 }

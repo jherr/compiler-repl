@@ -7,7 +7,15 @@ import { githubDark } from "@uiw/codemirror-theme-github";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-import { transpile as transpileCode } from "./server-actions";
+import { transpile as transpileCode, eslint } from "./server-actions";
+
+function Loader() {
+  return (
+    <div className="flex justify-center items-center h-full">
+      <div className="animate-spin rounded-full h-32 w-32 border-b-8 border-gray-300"></div>
+    </div>
+  );
+}
 
 export default function Repl({
   exampleFiles,
@@ -15,17 +23,26 @@ export default function Repl({
   exampleFiles: Record<string, string>;
 }) {
   const [code, setCode] = useState(Object.values(exampleFiles)[0] ?? "");
-  const [compiledCode, setCompiledCode] = useState("");
-  const [currentCode, setCurrentCode] = useState("");
-  const [stderr, setStderr] = useState("");
+  const [compiledCode, setCompiledCode] = useState<string | null>(null);
+  const [currentCode, setCurrentCode] = useState<string | null>(null);
+  const [eslintOutput, setEslintOutput] = useState<string | null>(null);
+  const [stderr, setStderr] = useState<string | null>(null);
 
   async function transpile(code: string) {
+    setCompiledCode(null);
+    setCurrentCode(null);
+    setEslintOutput(null);
+    setStderr(null);
+
     transpileCode(code).then(({ stderr, stdout }) => {
       setCompiledCode(stdout);
       setStderr(stderr);
     });
     transpileCode(code, "no-compiler.babelrc.json").then(({ stdout }) => {
       setCurrentCode(stdout);
+    });
+    eslint(code).then(({ stdout }) => {
+      setEslintOutput(stdout);
     });
   }
 
@@ -71,30 +88,55 @@ export default function Repl({
             <TabsList>
               <TabsTrigger value="compiler">React Compiler</TabsTrigger>
               <TabsTrigger value="current">Current Transpiler</TabsTrigger>
+              <TabsTrigger value="eslint">ESlint</TabsTrigger>
             </TabsList>
             <TabsContent value="compiler" className="h-full">
-              <CodeMirror
-                extensions={[javascript({ jsx: true })]}
-                theme={githubDark}
-                value={compiledCode}
-                height="100%"
-                className="h-[90%]"
-              />
-              <CodeMirror
-                theme={githubDark}
-                value={stderr}
-                height="100%"
-                className="h-[8%] mt-3"
-              />
+              {compiledCode ? (
+                <CodeMirror
+                  extensions={[javascript({ jsx: true })]}
+                  theme={githubDark}
+                  value={compiledCode}
+                  height="100%"
+                  className="h-[90%]"
+                />
+              ) : (
+                <Loader />
+              )}
+              {stderr ? (
+                <CodeMirror
+                  theme={githubDark}
+                  value={stderr}
+                  height="100%"
+                  className="h-[8%] mt-3"
+                />
+              ) : (
+                <Loader />
+              )}
             </TabsContent>
             <TabsContent value="current" className="h-full">
-              <CodeMirror
-                extensions={[javascript({ jsx: true })]}
-                theme={githubDark}
-                value={currentCode}
-                height="100%"
-                className="h-[90%]"
-              />
+              {currentCode ? (
+                <CodeMirror
+                  extensions={[javascript({ jsx: true })]}
+                  theme={githubDark}
+                  value={currentCode}
+                  height="100%"
+                  className="h-[90%]"
+                />
+              ) : (
+                <Loader />
+              )}
+            </TabsContent>
+            <TabsContent value="eslint" className="h-full">
+              {eslintOutput !== null ? (
+                <CodeMirror
+                  theme={githubDark}
+                  value={eslintOutput}
+                  height="100%"
+                  className="h-[90%]"
+                />
+              ) : (
+                <Loader />
+              )}
             </TabsContent>
           </Tabs>
         </div>
