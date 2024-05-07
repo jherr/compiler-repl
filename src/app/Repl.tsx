@@ -5,6 +5,9 @@ import { javascript } from "@codemirror/lang-javascript";
 import { githubDark } from "@uiw/codemirror-theme-github";
 
 import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
+import { transpile as transpileCode } from "./server-actions";
 
 export default function Repl({
   exampleFiles,
@@ -12,24 +15,18 @@ export default function Repl({
   exampleFiles: Record<string, string>;
 }) {
   const [code, setCode] = useState(Object.values(exampleFiles)[0] ?? "");
-  const [transpiledCode, setTranspiledCode] = useState("");
+  const [compiledCode, setCompiledCode] = useState("");
+  const [currentCode, setCurrentCode] = useState("");
   const [stderr, setStderr] = useState("");
 
-  console.log(JSON.stringify(Object.keys(exampleFiles)));
-
-  function transpile(code: string) {
-    fetch("/api/transpile", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ code }),
-    })
-      .then((res) => res.json())
-      .then(({ stdout, stderr }) => {
-        setTranspiledCode(stdout);
-        setStderr(stderr);
-      });
+  async function transpile(code: string) {
+    transpileCode(code).then(({ stderr, stdout }) => {
+      setCompiledCode(stdout);
+      setStderr(stderr);
+    });
+    transpileCode(code, "no-compiler.babelrc.json").then(({ stdout }) => {
+      setCurrentCode(stdout);
+    });
   }
 
   const timerRef = useRef<NodeJS.Timeout | null>(null);
@@ -70,19 +67,36 @@ export default function Repl({
           />
         </div>
         <div className="w-2/3 px-2 h-full">
-          <CodeMirror
-            extensions={[javascript({ jsx: true })]}
-            theme={githubDark}
-            value={transpiledCode}
-            height="100%"
-            className="h-[90%]"
-          />
-          <CodeMirror
-            theme={githubDark}
-            value={stderr}
-            height="100%"
-            className="h-[8%] mt-3"
-          />
+          <Tabs defaultValue="compiler" className="w-full h-full">
+            <TabsList>
+              <TabsTrigger value="compiler">React Compiler</TabsTrigger>
+              <TabsTrigger value="current">Current Transpiler</TabsTrigger>
+            </TabsList>
+            <TabsContent value="compiler" className="h-full">
+              <CodeMirror
+                extensions={[javascript({ jsx: true })]}
+                theme={githubDark}
+                value={compiledCode}
+                height="100%"
+                className="h-[90%]"
+              />
+              <CodeMirror
+                theme={githubDark}
+                value={stderr}
+                height="100%"
+                className="h-[8%] mt-3"
+              />
+            </TabsContent>
+            <TabsContent value="current" className="h-full">
+              <CodeMirror
+                extensions={[javascript({ jsx: true })]}
+                theme={githubDark}
+                value={currentCode}
+                height="100%"
+                className="h-[90%]"
+              />
+            </TabsContent>
+          </Tabs>
         </div>
       </div>
     </div>

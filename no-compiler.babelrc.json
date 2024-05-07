@@ -1,0 +1,19 @@
+{
+  "presets": [
+    [
+      "@babel/preset-typescript",
+      {
+        "isTSX": true,
+        "allExtensions": true
+      }
+    ],
+    [
+      "@babel/preset-react",
+      {
+        "development": false,
+        "pragma": "__jsx"
+      }
+    ]
+  ],
+  "plugins": ["@babel/plugin-transform-typescript"]
+}

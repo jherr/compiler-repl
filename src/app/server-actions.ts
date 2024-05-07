@@ -1,21 +1,22 @@
+"use server";
 import { spawn } from "node:child_process";
-import { NextResponse } from "next/server";
 
-export async function POST(req: Request) {
-  const { code } = await req.json();
-
-  const childProcess = spawn(
-    `npx babel --config-file ./repl.babelrc.json -f foo.js`,
-    {
-      shell: true,
-      stdio: ["pipe", "pipe", "pipe"],
-    }
-  );
+export async function transpile(
+  code: string,
+  config: string = "compiler.babelrc.json"
+): Promise<{ stdout: string; stderr: string }> {
+  const childProcess = spawn(`npx babel --config-file ./${config} -f foo.js`, {
+    shell: true,
+    stdio: ["pipe", "pipe", "pipe"],
+  });
 
   childProcess.stdout.setEncoding("utf-8");
   childProcess.stderr.setEncoding("utf-8");
 
-  const { stdout, stderr } = await new Promise((resolve) => {
+  const { stdout, stderr } = await new Promise<{
+    stdout: string;
+    stderr: string;
+  }>((resolve) => {
     childProcess.stdin.write(code + "\n", () => {
       let out = "";
       let err = "";
@@ -46,5 +47,5 @@ export async function POST(req: Request) {
     childProcess.stdin.end();
   });
 
-  return NextResponse.json({ stdout, stderr });
+  return { stdout, stderr };
 }
