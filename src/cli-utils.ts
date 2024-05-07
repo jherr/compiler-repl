@@ -1,4 +1,5 @@
 "use server";
+import fs from "node:fs/promises";
 import { spawn } from "node:child_process";
 
 async function getOutput(
@@ -53,13 +54,20 @@ async function getOutput(
 export async function eslint(
   code: string
 ): Promise<{ stdout: string; stderr: string }> {
-  return getOutput(
-    code,
-    `npx eslint --no-eslintrc --config compiler.eslintrc.json --stdin --no-color`
+  const tmpFileName = `tmp_${Math.random().toString(36).substring(7)}.tsx`;
+  await fs.writeFile(tmpFileName, code, "utf-8");
+
+  const out = await getOutput(
+    "",
+    `npx eslint --no-eslintrc --config compiler.eslintrc.json ./${tmpFileName} --no-color`
   );
+
+  await fs.unlink(tmpFileName);
+
+  return out;
 }
 
-export async function transpile(
+export async function babel(
   code: string,
   config: string = "compiler.babelrc.json"
 ): Promise<{ stdout: string; stderr: string }> {

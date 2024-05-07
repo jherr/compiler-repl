@@ -7,8 +7,6 @@ import { githubDark } from "@uiw/codemirror-theme-github";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-import { transpile as transpileCode, eslint } from "./server-actions";
-
 function Loader() {
   return (
     <div className="flex justify-center items-center h-full">
@@ -28,22 +26,59 @@ export default function Repl({
   const [eslintOutput, setEslintOutput] = useState<string | null>(null);
   const [stderr, setStderr] = useState<string | null>(null);
 
+  const currentRequest = useRef(0);
   async function transpile(code: string) {
+    const requestId = ++currentRequest.current;
     setCompiledCode(null);
     setCurrentCode(null);
     setEslintOutput(null);
     setStderr(null);
 
-    transpileCode(code).then(({ stderr, stdout }) => {
-      setCompiledCode(stdout);
-      setStderr(stderr);
-    });
-    transpileCode(code, "no-compiler.babelrc.json").then(({ stdout }) => {
-      setCurrentCode(stdout);
-    });
-    eslint(code).then(({ stdout }) => {
-      setEslintOutput(stdout);
-    });
+    fetch("/api/babel", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ code }),
+    })
+      .then((res) => res.json())
+      .then(({ stderr, stdout }) => {
+        if (requestId !== currentRequest.current) {
+          return;
+        }
+        setCompiledCode(stdout);
+        setStderr(stderr);
+      });
+
+    fetch("/api/babel", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ code, config: "no-compiler.babelrc.json" }),
+    })
+      .then((res) => res.json())
+      .then(({ stdout }) => {
+        if (requestId !== currentRequest.current) {
+          return;
+        }
+        setCurrentCode(stdout);
+      });
+
+    fetch("/api/eslint", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ code }),
+    })
+      .then((res) => res.json())
+      .then(({ stdout }) => {
+        if (requestId !== currentRequest.current) {
+          return;
+        }
+        setEslintOutput(stdout);
+      });
   }
 
   const timerRef = useRef<NodeJS.Timeout | null>(null);
