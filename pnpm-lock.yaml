@@ -87,9 +87,9 @@ importers:
       '@typescript-eslint/parser':
         specifier: ^7.8.0
         version: 7.8.0(eslint@8.57.0)(typescript@5.0.4)
-      babel-plugin-react-forget:
-        specifier: file:../forget-feedback/dist/babel-plugin-react-forget
-        version: file:../forget-feedback/dist/babel-plugin-react-forget
+      babel-plugin-react-compiler:
+        specifier: latest
+        version: 0.0.0-experimental-4690415-20240515
       eslint:
         specifier: ^8.38.0
         version: 8.57.0
@@ -97,8 +97,8 @@ importers:
         specifier: 14.0.1
         version: 14.0.1(eslint@8.57.0)(typescript@5.0.4)
       eslint-plugin-react-compiler:
-        specifier: file:../forget-feedback/dist/eslint-plugin-react-compiler
-        version: file:../forget-feedback/dist/eslint-plugin-react-compiler(eslint@8.57.0)
+        specifier: latest
+        version: 0.0.0-experimental-e04a001-20240515(eslint@8.57.0)
       postcss:
         specifier: ^8
         version: 8.4.38
@@ -1085,8 +1085,8 @@ packages:
   axobject-query@3.2.1:
     resolution: {integrity: sha512-jsyHu61e6N4Vbz/v18DHwWYKK0bSWLqn47eeDSKPB7m8tqMHF9YJ+mhIk2lVteyZrY8tnSj/jHOv4YiTCuCJgg==}
 
-  babel-plugin-react-forget@file:../forget-feedback/dist/babel-plugin-react-forget:
-    resolution: {directory: ../forget-feedback/dist/babel-plugin-react-forget, type: directory}
+  babel-plugin-react-compiler@0.0.0-experimental-4690415-20240515:
+    resolution: {integrity: sha512-unBK0w2vxrFa3CAeeEGXfMTdBHM9vWZpItUXea4L4FDrD4QpqcAVMtR4Zu0GC0PvXRwj6KuPzzBkVmgGGPFxnw==}
 
   balanced-match@1.0.2:
     resolution: {integrity: sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==}
@@ -1379,8 +1379,8 @@ packages:
     peerDependencies:
       eslint: ^3 || ^4 || ^5 || ^6 || ^7 || ^8
 
-  eslint-plugin-react-compiler@file:../forget-feedback/dist/eslint-plugin-react-compiler:
-    resolution: {directory: ../forget-feedback/dist/eslint-plugin-react-compiler, type: directory}
+  eslint-plugin-react-compiler@0.0.0-experimental-e04a001-20240515:
+    resolution: {integrity: sha512-Cwj07NvHezC8wFaFf7nQ2N2ILfs9IuhT2z07PurZb7WxQ5DOZTaX5yaOTCKaMdxoL/7l7wMgbo8+hkgMhpmM8g==}
     engines: {node: ^14.17.0 || ^16.0.0 || >= 18.0.0}
     peerDependencies:
       eslint: '>=7'
@@ -3603,7 +3603,7 @@ snapshots:
     dependencies:
       dequal: 2.0.3
 
-  babel-plugin-react-forget@file:../forget-feedback/dist/babel-plugin-react-forget:
+  babel-plugin-react-compiler@0.0.0-experimental-4690415-20240515:
     dependencies:
       '@babel/generator': 7.2.0
       '@babel/types': 7.24.5
@@ -4014,7 +4014,7 @@ snapshots:
       object.entries: 1.1.8
       object.fromentries: 2.0.8
 
-  eslint-plugin-react-compiler@file:../forget-feedback/dist/eslint-plugin-react-compiler(eslint@8.57.0):
+  eslint-plugin-react-compiler@0.0.0-experimental-e04a001-20240515(eslint@8.57.0):
     dependencies:
       '@babel/core': 7.24.5
       '@babel/parser': 7.24.5
