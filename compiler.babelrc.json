@@ -18,7 +18,7 @@
   "plugins": [
     "@babel/plugin-transform-typescript",
     [
-      "babel-plugin-react-forget",
+      "babel-plugin-react-compiler",
       {
         "compilationMode": "infer",
         "panicThreshold": "NONE"

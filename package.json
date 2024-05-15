@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "lint:forget": "eslint --no-eslintrc --config compiler.eslintrc.json"
+    "lint:compiler": "eslint --no-eslintrc --config compiler.eslintrc.json"
   },
   "dependencies": {
     "@codemirror/lang-javascript": "^6.2.2",
@@ -38,7 +38,7 @@
     "@types/react-dom": "^18",
     "@typescript-eslint/eslint-plugin": "^7.8.0",
     "@typescript-eslint/parser": "^7.8.0",
-    "babel-plugin-react-forget": "latest",
+    "babel-plugin-react-compiler": "latest",
     "eslint": "^8.38.0",
     "eslint-config-next": "14.0.1",
     "eslint-plugin-react-compiler": "latest",
